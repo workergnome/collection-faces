@@ -50,9 +50,9 @@ bundle exec ruby download_em_all.rb
 
 For reasons that *mostly* have to do with the CMOA backend (but also have to do with my code), this process is somewhat unreliable and needs to be run multiple times to successfully download all the images.  Everytime it runs, it makes sure that it doesn't redownload the images it already has. 
 
-You'll know when it stops working when it stops saying "OK" after the URLS.  
+It will eventually stop working, and the images will no longer download.  You can notice this in the terminal when the output stops saying "OK" after the URLS it's trying to download.  When this happens, `ctrl-c` the application and start it again.  Note that it may appear to be re-downloading images, but the application isn't smart about images which appear multiple times on duplicate images, and will redownload those a second time.  
 
-Once it doesn't download anything new, we now have all the images! 
+Once running this script doesn't download anything new, we now have all the images! 
 
 #### Step Three: Detect the Faces.
 
@@ -71,21 +71,25 @@ We're using the [Isotope](http://isotope.metafizzy.co) javascript library to bui
 ```bash
 ruby export_image_grid.rb
 ```
+
 This should create a HTML file for us.
 
 In my effort to use as many languages as possible, we're now going to use python's SimpleHTTPServer to host a server for the directory:
 
-``
+```bash
 python -m SimpleHTTPServer 8008 
-``
+```
+
 This will start serving the files in this directory as webpages. We will then open that webpage using [webkit2png](http://www.paulhammond.org/webkit2png/), which will open the webpage and save it as an image.
 
 In a new terminal window:
-``
+
+```bash
 webkit2png -W 2400 -F --delay=10 --filename final_image --timeout=400 http://localhost:8008/image_grid.html
-``
+```
 
 There's a 10 second delay as part of that command that might be unneccesary, but it might not, so I'm just leaving it in. This should generate a `final_image-full.png` file, which is what we were going for in the first place!
 
+---
 
-
+Please note the collection images used in this may be under copyright, and that Carnegie Museum has not authorized their use in this way.  
