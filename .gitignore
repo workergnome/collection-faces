@@ -2,6 +2,7 @@ obj/*
 bin/data/downloaded_faces/*.png
 bin/cmoa_faces.app
 bin/data/cmoa.json
+bin/data/tate.csv
 bin/data/downloaded_images/*.jpg
 image_grid.html
 final_image-full.png

@@ -68,6 +68,23 @@ make && make run
 
 Once running, this application will scan through all the images downloaded to detect faces within them.  Every time it finds a face, it will save out an PNG of the first detected face into the `bin/data/downloaded_faces` directory.
 
+If you'd like to tweak the results, within ofApp.cpp:
+
+```c++
+
+  finder.setScaleHaar(1.05);  // smaller is more precise, but must be greater than 1.0
+  finder.setNeighbors(8);  // larger is more restrictive.
+```
+
+will change the specificity, and 
+
+```c++
+    facesFound = finder.findHaarObjects(img, 24, 24); // minimum face size of 24x24px
+```
+
+will change the minimum size face it will detect.  Play with these values.
+
+
 #### Step Four: Generate the Final Image
 
 We're using the [Isotope](http://isotope.metafizzy.co) Javascript library to build a bin-packed grid of the images as a webpage.  However, since we don't actually have a html file for these yet, so we'll use another ruby script to generate that for us:
@@ -93,6 +110,25 @@ webkit2png -W 2400 -F --delay=10 --filename final_image --timeout=400 http://loc
 ```
 
 There's a 10 second delay as part of that command that might be unneccesary, but it might not, so I'm just leaving it in. This should generate a `final_image-full.png` file, which is what we were going for in the first place!
+
+---
+
+## Bonus Round
+
+There's no reason why this should only work for the Carnegie's dataset.
+
+For Instance 
+
+```bash
+curl -o ./bin/data/cmoa.json https://raw.githubusercontent.com/tategallery/collection/master/artwork_data.csv
+```
+and 
+
+```bash
+bundle exec ruby download_em_all_tate.rb
+```
+
+will do the same thing, but for the Tate's collection!
 
 ---
 

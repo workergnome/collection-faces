@@ -3,7 +3,8 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
   finder.setup("haarcascade_frontalface_default.xml");
-  finder.setScaleHaar(2.0);
+  finder.setScaleHaar(1.05);
+  finder.setNeighbors(8);
   string basedir = "downloaded_images";
   dir = ofDirectory(basedir);
   dir.allowExt("jpg");
@@ -22,10 +23,10 @@ void ofApp::update(){
   }
   else {
     img.load(dir.getPath(currentImage));
-    facesFound = finder.findHaarObjects(img);
+    facesFound = finder.findHaarObjects(img, 24, 24);
     if (facesFound > 0) {
       faceImage.load(dir.getPath(currentImage));
-      pause = 30;
+      pause = 2;
       saveFace(img,finder.blobs[0].boundingRect,currentImage);
       cur = finder.blobs[0].boundingRect;
       faceImageCrop.load(dir.getPath(currentImage));

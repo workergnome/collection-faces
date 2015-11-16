@@ -10,8 +10,8 @@ SLEEP_BETWEEN_DOWNLOADS = 5
 all_things = JSON.parse(File.read(JSON_SOURCE))["things"]
 
 ## FOR ALL THE THINGS, DOWNLOAD!
+hydra = Typhoeus::Hydra.new
 all_things.each_slice(CONCURRENT_DOWNLOADS) do |things|
-  hydra = Typhoeus::Hydra.new
   requests = []
   lookup = {}
   things.each do |thing|
@@ -22,7 +22,7 @@ all_things.each_slice(CONCURRENT_DOWNLOADS) do |things|
             filename = "#{thing["id"]}_#{i}.jpg"
             unless File.exist? "#{EXPORT_PATH}#{filename}"
               lookup[url] = filename
-              request = Typhoeus::Request.new(url, {followlocation: true})
+              request = Typhoeus::Request.new(url, {followlocation: true, timeout: 300})
               hydra.queue(request)
               requests.push request
             else
