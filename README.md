@@ -1,12 +1,11 @@
-# The Faces of the Collection
 
 ![](faces_of_cmoa.png)
 
-Developed as part of the [Carnegie Museum of Art's Hackathon](http://www.cmoa.org/hackathon), this is a application that uses the CMOA dataset to download all of the images in the collection, detect faces in the artwork, and then generate a single image containing of all of the faces within the collection.
+Developed as part of the [Carnegie Museum of Art's Hackathon](http://www.cmoa.org/hackathon), this is (to use the word *loosely*) an application that uses the CMOA dataset to download all of the images in the collection, detect faces in the artwork, and then generate a single image containing of all of the faces within the collection.
 
-This repository contains code in several languages, but is designed to be cloned within the ``apps/myApps/`` directory within an installation of openFrameworks, installed on OSX. It will likely work on other environments, but you may have to adjust things as needed.
+This repository contains code in several languages, including C++, Javascript, and Ruby, but is designed to be cloned within the ``apps/myApps/`` directory of an installation of openFrameworks (v.0.9), installed on OSX. It will likely work on other environments, but you may have to adjust things from this readme.
 
-## Software Used:
+## Some of the Software Used:
 
 * [openFrameworks](http://openframeworks.cc)
 * [OpenCV](http://opencv.org)
@@ -16,9 +15,12 @@ This repository contains code in several languages, but is designed to be cloned
 * [Typhoeus](https://github.com/typhoeus/typhoeus)
 * [Isotope](http://isotope.metafizzy.co)
 
-## Instructions for use
+## Disclaimer of Usability
 
-This software was written over a weekend as part of a hackathon, so it's not nearly as clean or concise as it could be, and it uses many different programming languages and tools.  As such, it's not the easiest thing to get running—there are a lot of dependencies involved.  This document tries to explain the process.
+This software was written over a weekend as part of a hackathon, so it's not nearly as clean or concise as it could be and it uses many different programming languages and tools.  As such, it's not the easiest thing to get running—there are a lot of dependencies involved.  This document tries to explain the process.  Note that this names, but does not include  installation instructions for each of the software programs of libraries included.  
+
+
+## Instructions for use
 
 #### Step One: Download the collections data.
 
@@ -30,19 +32,19 @@ We can download that data using [curl](http://curl.haxx.se):
 curl -o ./bin/data/cmoa.json https://raw.githubusercontent.com/cmoa/collection/master/cmoa.json
 ```
 
-This will give us a large JSON file.
+This will download a single large JSON file and save it to the `bin/data` directory.
 
 #### Step Two: Download the Images
 
-To download the images contained within the dump, we can use Ruby and the Typhoeus gem to download the images in parallel.  the `download_em_all.rb` script will do this.
+To download the images contained within the downloaded dataset, we can use Ruby and the [Typhoeus](https://github.com/typhoeus/typhoeus) gem to download the images in parallel.  The included `download_em_all.rb` script will do this.
 
-to install the dependencies, we use [Bundler](http://bundler.io):
+First, to install the dependencies, we use [Bundler](http://bundler.io):
 
 ```bash
 bundle install
 ```
 
-We can then run the script and download the images.
+Once Bundler has installed the dependencies, we can use it to run the script and download the images.
 
 ```bash
 bundle exec ruby download_em_all.rb
@@ -56,31 +58,33 @@ Once running this script doesn't download anything new, we now have all the imag
 
 #### Step Three: Detect the Faces.
 
-In order to do the facial detection, we're using [OpenCV](http://opencv.org), an extremely powerful open source computer vision library.  We're going to use it via [openFrameworks](http://openframeworks.cc), a C++ framework for creative coding. Many people use xCode to run openFrameworks, but I prefer using the makefiles instead.  The following command should compile the application and then execute it:
+In order to do the facial detection, we're using [OpenCV](http://opencv.org), an extremely powerful open source computer vision library.  We're going to use it via [openFrameworks](http://openframeworks.cc), a C++ framework for creative coding. Installing openFrameworks is straightforward, and [instructions can be found on the openFrameworks website](http://openframeworks.cc/download/).
+
+Many people use xCode to edit and compile openFrameworks applications, but I prefer using makefiles instead.  The following command should compile the application and then execute it:
 
 ```bash
 make && make run
 ```
 
-This application will go through all the images downloaded to detect faces within them.  Every time it finds a face, it will save out an PNG of the first detected face into the `bin/data/downloaded_faces` directory.
+Once running, this application will scan through all the images downloaded to detect faces within them.  Every time it finds a face, it will save out an PNG of the first detected face into the `bin/data/downloaded_faces` directory.
 
 #### Step Four: Generate the Final Image
 
-We're using the [Isotope](http://isotope.metafizzy.co) javascript library to build a binpacked grid of the images as a webpage.  However, we don't actually have a webpage yet, so we'll use another ruby script to generate a webpage for us:
+We're using the [Isotope](http://isotope.metafizzy.co) Javascript library to build a bin-packed grid of the images as a webpage.  However, since we don't actually have a html file for these yet, so we'll use another ruby script to generate that for us:
 
 ```bash
 ruby export_image_grid.rb
 ```
 
-This should create a HTML file for us.
+This should create a HTML file for us at `image_grid.html`.
 
-In my effort to use as many languages as possible, we're now going to use python's SimpleHTTPServer to host a server for the directory:
+In a misguided effort to use as many languages as possible, we're now going to use python's SimpleHTTPServer to host a server for the directory:
 
 ```bash
 python -m SimpleHTTPServer 8008 
 ```
 
-This will start serving the files in this directory as webpages. We will then open that webpage using [webkit2png](http://www.paulhammond.org/webkit2png/), which will open the webpage and save it as an image.
+This is a clever commandline tool to start serving all the files in this directory as web pages. We could open <http://localhost:8008/image_grid> in a browser, but instead we will then open it using [webkit2png](http://www.paulhammond.org/webkit2png/). webkit2png is a tool designed to export PNG images from a website, and so we'll use it for just that.
 
 In a new terminal window:
 
